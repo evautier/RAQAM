@@ -1,0 +1,2 @@
+## R.A.Q.A.M – Retrieval-Augmented Quiz Automated Maker
+R.A.Q.A.M (Retrieval-Augmented Quiz Automated Maker) is an AI-powered tool designed to generate quizzes from any type of content, including documents, videos, and more. Leveraging state-of-the-art retrieval and language generation techniques, R.A.Q.A.M allows users to quickly create engaging and informative quizzes, seamlessly blending content understanding with automation.
