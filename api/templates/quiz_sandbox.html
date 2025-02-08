@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask WebApp</title>
+    <link rel="stylesheet" href="static/style.css">
+    <script defer src="static/script.js"></script>
+</head>
+<body>
+    <!-- Main Content -->
+    <div class="container">
+        <div id="left-container">
+            <div id="config-panel">
+                <div class="config-row">
+                    <label for="num-questions">Number of questions:</label>
+                    <input type="text" id="num-questions" value="4">
+                </div>
+                <div class="config-row">
+                    <label for="num-choices">Number of choices :</label>
+                    <input type="text" id="num-choices" value="4">
+                </div>
+                <div class="generate-quiz-container">
+                    <button id="generate-quiz">Generate Quiz</button>
+                    <div id="loader" class="loader hidden"></div>
+                </div>                
+            </div>
+            <textarea id="text-area" placeholder="Copy text here..."></textarea>
+        </div>
+        <!-- Right Side: Question Box -->
+        <div class="question-box">
+            <div class="nav-buttons">
+                <button id="prev" class="nav-button"><i class="fas fa-chevron-left"></i></button>
+                <span id="question-counter"></span>
+                <button id="next" class="nav-button"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <h3 id="question-text"></h2>
+            <div id="choices"></div>
+        </div>
+    </div>
+</body>
+</html>

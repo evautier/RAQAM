@@ -1,0 +1,240 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Main Layout */
+.container {
+    display: flex;
+    width: 80%;
+    height: 80vh;
+    margin-top: 20px;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* Left side (Configuration Panel + Text Area) */
+#left-container {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+}
+
+/* Config Panel: Vertical Layout */
+#config-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push the button to the bottom */
+    height: 100px; /* Fixed height */
+    background-color: #f8f9fa;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+/* Form Rows: Label + Input in One Row */
+.config-row {
+    display: flex;
+    align-items: center; /* Ensures vertical alignment */
+    gap: 10px; /* Reduces space between label and input */
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* Labels */
+.config-row label {
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0; /* Prevents label from shrinking */
+}
+
+/* Inputs */
+.config-row input {
+    width: 30px; /* Slightly wider */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+/* Generate Quiz Button: Bottom Right */
+#generate-quiz {
+    align-self: flex-end; /* Push to the right */
+    background-color: #158eeb;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px; /* Slightly larger text */
+    border-radius: 5px;
+}
+
+/* Text Area */
+#text-area {
+    flex-grow: 1; /* Takes all remaining space */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    resize: none;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Right Side: Question Box */
+.question-box {
+    flex: 1;
+    max-width: 45%;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #f9f9f9;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Choice Buttons */
+/* Default button style */
+.choice-btn {
+    display: block;
+    margin: 10px 0;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    background: rgb(227, 226, 226); /* Default color */
+    color: rgb(59, 59, 59);
+    font-size: 16px;
+    text-align: left;
+}
+
+/* Correct answer style */
+.correct {
+    background-color: rgb(132, 215, 132) !important;  /* Light Green */
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Wrong answer style */
+.wrong {
+    background-color: rgb(240, 127, 127) !important;  /* Light Red */
+    transition: background-color 0.3s ease-in-out;
+}
+
+.choice-btn:hover {
+    opacity: 0.8;
+}
+
+/* Animation for sliding effect */
+.slide-out {
+    transform: translateX(-100%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+.slide-in {
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+}
+    
+
+/* Question Counter */
+#question-counter {
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(59, 59, 59);
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 15px;
+    border-radius: 10px;
+}
+
+.nav-button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: rgb(227, 226, 226);
+    color: rgb(59, 59, 59);
+    /*transition: all 0.3s ease-in-out;*/
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    position: relative;
+    display: none;
+}
+
+/* Navigation Buttons Container */
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+/* Disabled navigation buttons */
+.nav-button:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    opacity: 0.15;
+}
+
+/* Left Arrow */
+.nav-button#prev::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-left: 3px solid white;
+    border-bottom: 3px solid white;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Right Arrow */
+.nav-button#next::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-right: 3px solid white;
+    border-bottom: 3px solid white;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Hover Effects */
+.nav-button:not(:disabled):hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.nav-button:active {
+    transform: scale(0.95);
+}
+
+.loader {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #3498db; /* Blue spinner */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.hidden {
+    display: none;
+}
