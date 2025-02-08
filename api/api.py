@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 from langchain.embeddings import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
@@ -18,9 +18,10 @@ def generate_quiz():
     # Isolating query parameters
     data = request.get_json()
     text_content = data.get("text_content")
-    nb_questions = data.get("nb_questions")  # Convert to int
+    nb_questions = int(data.get("num_questions"))
+    nb_choices = int(data.get("num_choices"))
     # Generating quiz with RAQAM
-    text_document = Document(text_data=[text_content], chunk_size=1000, chunk_overlap=100)
+    text_document = Document(text_data=[text_content], chunk_size=2000, chunk_overlap=100)
     quiz_generator = QuizGenerator(text_document=text_document,
                                    embedding_model=embeddings,
                                    embedding_batch_size=10,
@@ -32,5 +33,9 @@ def generate_quiz():
     quiz = quiz_generator.generate_quiz()
     return jsonify(quiz.to_dict())  
 
+@app.route("/quiz-sandbox")
+def quiz_sandbox():
+    return render_template("quiz_sandbox.html")
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=5050, debug=False)

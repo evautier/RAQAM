@@ -86,10 +86,10 @@ class QuizGenerator():
                                                                       k=self.nb_questions)
             # Generating question for each content that has been found
             print("Generating questions from relevant content")
-            questions = [self.generate_question(content=content.page_content) for content in tqdm(relevant_content, desc="Generating questions")]
+            quiz = [self.generate_question(content=content.page_content) for content in tqdm(relevant_content, desc="Generating questions")]
         else:
             relevant_content = self.text_document.text_chunks   
             questions_distribution = get_questions_distribution(nb_text_chunks=len(relevant_content), nb_questions=self.nb_questions) 
-            questions = [self.generate_question(nb_questions=questions_distribution[i], content=content) for i, content in tqdm(enumerate(relevant_content), desc="Generating questions") if questions_distribution[i] > 0]          
+            quiz = [self.generate_question(nb_questions=questions_distribution[i], content=content) for i, content in tqdm(enumerate(relevant_content), desc="Generating questions") if questions_distribution[i] > 0]          
     
-        return reduce(lambda x, y: x+y, questions)
+        return reduce(lambda x, y: x+y, quiz)
