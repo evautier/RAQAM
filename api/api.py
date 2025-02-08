@@ -29,7 +29,7 @@ def generate_quiz():
                                    question_prompt_template=prompt_template,
                                    retrieval_query=retrieval_query,
                                    nb_questions=nb_questions,
-                                   local_vector_store_path="faiss_vector_store")
+                                   local_vector_store_path=None)
     quiz = quiz_generator.generate_quiz()
     return jsonify(quiz.to_dict())  
 
