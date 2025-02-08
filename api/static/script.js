@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             updateCounter();
             nextButton.disabled = !answeredQuestions[index];
+            prevButton.disabled = (index == 0);
 
         }, 300);
     }
