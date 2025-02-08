@@ -8,7 +8,7 @@ class MCQuestion(BaseModel):
     question: str = Field(description="The question being asked.")
     choices: List[str] = Field(description="List of possible choices for the question.")
     answer_index: int = Field(description="Index of the correct answer to the question.")
-    explanation: str = Field(description="Explanation of the correct answer.")
+    explanation: str = Field(description="Explanation of the correct answer.", default="Default explanation")
 
     def to_dict(self):
         return (
@@ -25,7 +25,7 @@ class Quiz(BaseModel):
     Schema for a quiz containing multiple-choice questions
     """
     questions: List[MCQuestion]
-    quiz_name: str = Field(description="Name that describes the quiz")
+    quiz_name: str = Field(description="Name that describes the quiz", default="Default quiz name")
 
     def __add__(self, other):
         return Quiz(questions=self.questions + other.questions,

@@ -9,6 +9,8 @@ Make the questions specific and ensure it relates directly to the provided mater
 - Four choices (one correct and three plausible distractors)
 - The correct answer
 - An explanation
+
+Provide a general quiz name about this content
 """
 
 retrieval_query = """
