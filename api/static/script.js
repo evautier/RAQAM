@@ -1,3 +1,18 @@
+function formatDictionary(data, indent = 0) {
+    let formattedText = "";
+    for (const [key, value] of Object.entries(data)) {
+        if (typeof value === "object" && value !== null) {
+            // If value is a nested object, recursively format it with indentation
+            formattedText += `<p style="margin-left: ${indent}px"><strong>${key}:</strong></p>`;
+            formattedText += formatDictionary(value, indent + 20); // Increase indentation
+        } else {
+            // Normal key-value pair
+            formattedText += `<p style="margin-left: ${indent}px"><strong>${key}:</strong> ${value}</p>`;
+        }
+    }
+    return formattedText;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const generateButton = document.getElementById("generate-quiz");
     const numQuestionsInput = document.getElementById("num-questions");
@@ -10,6 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
     let questionCounter = document.getElementById("question-counter");
     let prevButton = document.getElementById("prev");
     let nextButton = document.getElementById("next");   
+    const infoBtn = document.getElementById("infoBtn");
+    const infoModal = document.getElementById("infoModal");
+    const closeModal = document.getElementById("closeModal");
+    const infoContent = document.getElementById("infoContent");
+    let quizContext = {};
      
     // Store answered questions (to keep button colors)
     let answeredQuestions = {};
@@ -27,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
         nextButton.style.display = "none";
         try {
             // Show loader & disable button        
-            loader.classList.remove("hidden");
+            loader.style.visibility = "visible";
             generateButton.disabled = true;        
             const response = await fetch("/generate-quiz", {
                 method: "POST",
@@ -43,6 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             const data = await response.json();
+            quizContext = data.quizContext;
             if (!data.questionCards || !Array.isArray(data.questionCards)) {
                 throw new Error("Invalid response format");
             }
@@ -53,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show nav buttons when quiz is loaded
             prevButton.style.display = "inline-block";
             nextButton.style.display = "inline-block";
+            infoBtn.style.display = "flex";
 
         } catch (error) {
             console.error("Fetch error:", error);
@@ -60,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         } finally {
             // Hide loader & enable button
-            loader.classList.add("hidden");
+            loader.style.visibility = "hidden";
             generateButton.disabled = false;
         }
     }
@@ -156,6 +178,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    infoBtn.addEventListener("click", function () {
+        infoContent.innerHTML = formatDictionary(quizContext);
+        infoModal.style.display = "flex";
+    });
+
+    closeModal.addEventListener("click", function () {
+        infoModal.style.display = "none";
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener("click", (e) => {
+        if (e.target === infoModal) {
+            infoModal.style.display = "none";
+        }
+    });
+    
     // Load first question
     generateButton.addEventListener("click", fetchQuiz);
 });

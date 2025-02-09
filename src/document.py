@@ -17,6 +17,7 @@ class Document():
         self.text_data = text_data
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
+        self.content_length = sum([len(text) for text in text_data])
         # Defining text splitter to use
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         # Splitting input text data into chunks of text

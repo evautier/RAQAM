@@ -13,7 +13,8 @@ if __name__ == "__main__":
     with open("story.txt", 'r') as f:
         text_content = f.read()
     text_document = Document(text_data=[text_content], chunk_size=2000, chunk_overlap=100)
-    quiz_generator = QuizGenerator(text_document=text_document,
+    quiz_generator = QuizGenerator(content_source="text",
+                                   text_document=text_document,
                                    embedding_model=embeddings,
                                    embedding_batch_size=10,
                                    llm=llm,
@@ -22,4 +23,5 @@ if __name__ == "__main__":
                                    nb_questions=4,
                                    local_vector_store_path="faiss_vector_store")
     quiz = quiz_generator.generate_quiz()
+    quiz_context = quiz_generator.get_context()
     print(quiz.json())

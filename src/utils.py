@@ -1,4 +1,5 @@
 import re
+import tiktoken
 
 def remove_headers_footers(text, header_patterns=None, footer_patterns=None):
     if header_patterns is None:
@@ -52,3 +53,7 @@ def get_questions_distribution(nb_text_chunks, nb_questions):
         questions_distribution[index] += 1
         index = (index + 1) % nb_text_chunks
     return questions_distribution
+
+def count_tokens(text, model):
+    encoding = tiktoken.encoding_for_model(model)
+    return len(encoding.encode(text))

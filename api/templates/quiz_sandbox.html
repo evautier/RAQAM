@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask WebApp</title>
     <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script defer src="static/script.js"></script>
 </head>
 <body>
@@ -22,17 +23,26 @@
                 </div>
                 <div class="generate-quiz-container">
                     <button id="generate-quiz">Generate Quiz</button>
-                    <div id="loader" class="loader hidden"></div>
+                    <div id="loader" class="loader"></div>
                 </div>                
             </div>
             <textarea id="text-area" placeholder="Copy text here..."></textarea>
         </div>
         <!-- Right Side: Question Box -->
         <div class="question-box">
+            <button id="infoBtn" class="info-button">
+                <i class="fas fa-info-circle"></i>
+            </button>                
+            <div id="infoModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeModal" class="close">&times;</span>
+                    <pre id="infoContent"></pre>
+                </div>
+            </div>
             <div class="nav-buttons">
-                <button id="prev" class="nav-button"><i class="fas fa-chevron-left"></i></button>
+                <button id="prev" class="nav-button"></button>
                 <span id="question-counter"></span>
-                <button id="next" class="nav-button"><i class="fas fa-chevron-right"></i></button>
+                <button id="next" class="nav-button"></button>
             </div>
             <h3 id="question-text"></h2>
             <div id="choices"></div>

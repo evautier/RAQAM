@@ -6,10 +6,16 @@ from langchain.prompts import PromptTemplate
 
 from src.vector_store import VectorStore
 from src.quiz import Quiz
-from src.utils import get_questions_distribution
+from src.utils import get_questions_distribution, count_tokens
+
+model_costs = {
+    "gpt-4o-mini": {"input": 0.075, "output": 0.600},
+    "text-embedding-3-small": {"input": 0.020}
+}
 
 class QuizGenerator():
     def __init__(self,
+                 content_source,
                  text_document,
                  embedding_model,
                  embedding_batch_size,
@@ -21,6 +27,7 @@ class QuizGenerator():
         """
         Quiz generator working with retrieval on .pdf embedded content. 
         
+        @param content_source: Source of text content (text, pdf, web, etc.)
         @param text_document: Text Document for which to generate quiz
         @param embedding_model: Model for embeddings to use for vector store
         @param embedding_batch_size: Batch size for embeddings generation
@@ -31,6 +38,7 @@ class QuizGenerator():
         @param local_vector_store_path: Path where to save vector store to avoid multiplying embeddings generation
         """
         # Setting-up class attributes
+        self.content_source = content_source
         self.text_document = text_document
         self.embedding_model = embedding_model
         self.embedding_batch_size = embedding_batch_size
@@ -41,7 +49,45 @@ class QuizGenerator():
         self.local_vector_store_path = local_vector_store_path
         # Performing embedding on text document's text chunks if necessary (will be None if only one chunk)
         self.vector_store = self.create_vector_store()
+        # Saving generation data
+        self.model_name = llm.model_name
+        self.embedding_model_name = embedding_model.model
+        self.prompts_tokens = 0
+        self.responses_tokens = 0
+        self.embeddings_tokens = 0
     
+    def get_context(self):
+        """
+        Builds a dictionnary containing informations about quiz generation        
+        """
+        # Calculating costs foe every request on api
+        self.prompts_cost = (self.prompts_tokens / 1e6) * model_costs[self.model_name]["input"]
+        self.responses_cost = (self.responses_tokens / 1e6) * model_costs[self.model_name]["output"]
+        self.embeddings_cost = (self.embeddings_tokens / 1e6) * model_costs[self.embedding_model_name]["input"]
+        self.total_cost = self.prompts_cost + self.responses_cost + self.embeddings_cost
+        return {
+            "contentSource": self.content_source,
+            "contentLength": self.text_document.content_length,
+            "chunkSize": self.text_document.chunk_size,
+            "chunkOverlap": self.text_document.chunk_overlap,
+            "nbChunks": len(self.text_document.text_chunks),
+            "generationModelName": self.model_name,
+            "embeddingModelName": self.embedding_model_name,
+            "hasEmbeddedChunks": self.vector_store is not None,
+            "tokens": {
+                "prompts": self.prompts_tokens,
+                "responses": self.responses_tokens,
+                "embeddings": self.embeddings_tokens,
+                "total": self.prompts_tokens + self.responses_tokens + self.embeddings_tokens 
+            },
+            "costs": {
+                "prompts": f"{round(self.prompts_cost, 6):.6f} $",
+                "responses": f"{round(self.responses_cost, 6):.6f} $",
+                "embeddings": f"{round(self.embeddings_cost, 6):.6f} $",
+                "total": f"{round(self.total_cost, 6):.6f} $"
+            }
+        }
+
     def create_vector_store(self):
         """
         Creates a vector store and performs embedding on document text chunks if necessary               
@@ -54,6 +100,8 @@ class QuizGenerator():
             if self.local_vector_store_path is None or not os.path.exists(self.local_vector_store_path):
                 print("Creating embeddings from extracted chunks and storing into vector store")
                 vector_store.add_embedded_chunks(chunks=self.text_document.text_chunks)
+                # Adding input tokens for embedding
+                self.embeddings_tokens += sum([count_tokens(chunk) for chunk in self.text_document.text_chunks])
             # Saving vector store in local
             if self.local_vector_store_path:
                 vector_store.save_vector_store(path=self.local_vector_store_path)
@@ -73,6 +121,9 @@ class QuizGenerator():
         formatted_prompt = prompt.format(nb_questions=nb_questions, content=content)        
         # Generating question using LLM
         response = self.llm.invoke(formatted_prompt)
+        # Adding generated token for input and output
+        self.prompts_tokens += count_tokens(text=formatted_prompt, model=self.model_name)
+        self.responses_tokens += count_tokens(text=response.json(), model=self.model_name)
         return response
 
     def generate_quiz(self):
@@ -91,5 +142,5 @@ class QuizGenerator():
             relevant_content = self.text_document.text_chunks   
             questions_distribution = get_questions_distribution(nb_text_chunks=len(relevant_content), nb_questions=self.nb_questions) 
             quiz = [self.generate_question(nb_questions=questions_distribution[i], content=content) for i, content in tqdm(enumerate(relevant_content), desc="Generating questions") if questions_distribution[i] > 0]          
-    
+
         return reduce(lambda x, y: x+y, quiz)
