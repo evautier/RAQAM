@@ -1,0 +1,12 @@
+query_source_arguments: ["text_content", "url", "pdf_filepath"]
+query_settings_arguments: ["num_questions", "num_choices"]
+forced_positive_arguments: ["num_questions", "num_choices"]
+
+base_quiz_config: 
+  model_name: "gpt-4o-mini"
+  embdeddings_model_name: "text-embedding-3-small"
+  embedding_batch_size: 10
+  min_text_length: 500
+  chunk_size: 2000
+  chunk_overlap: 100
+  local_vector_store_path: null

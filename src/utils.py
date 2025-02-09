@@ -1,5 +1,6 @@
 import re
 import tiktoken
+import yaml
 
 def remove_headers_footers(text, header_patterns=None, footer_patterns=None):
     if header_patterns is None:
@@ -46,10 +47,10 @@ def preprocess_text(text):
 
     return text.strip()
 
-def get_questions_distribution(nb_text_chunks, nb_questions):
+def get_questions_distribution(nb_text_chunks, num_questions):
     index = 0
     questions_distribution = [0 for i in range(nb_text_chunks)]
-    for _ in range(nb_questions):
+    for _ in range(num_questions):
         questions_distribution[index] += 1
         index = (index + 1) % nb_text_chunks
     return questions_distribution
@@ -57,3 +58,7 @@ def get_questions_distribution(nb_text_chunks, nb_questions):
 def count_tokens(text, model):
     encoding = tiktoken.encoding_for_model(model)
     return len(encoding.encode(text))
+
+def read_yaml(path):
+    with open(path, 'r') as file:
+       return yaml.safe_load(file)

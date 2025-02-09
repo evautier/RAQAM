@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let questions = [];
     let choicesContainer = document.getElementById("choices");
     let questionCounter = document.getElementById("question-counter");
+    let errorBox = document.getElementById("error-message");
     let prevButton = document.getElementById("prev");
     let nextButton = document.getElementById("next");   
     const infoBtn = document.getElementById("infoBtn");
@@ -45,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
         answeredQuestions = {};
         prevButton.style.display = "none";
         nextButton.style.display = "none";
+        errorBox.style.display = "none";
         try {
             // Show loader & disable button        
             loader.style.visibility = "visible";
@@ -57,8 +59,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error("Error from server:", errorData);
-                alert(`Error: ${errorData.error || "Unknown error"}`);
+                let stackTrace = errorData.stack_trace ? `<pre>${errorData.stack_trace}</pre>` : ""; // Format stack trace if exists
+                errorBox.innerHTML = `
+                    <p><strong>${errorData.error}</strong></p>
+                    <p>${errorData.message}</p>
+                    ${stackTrace}
+                `;
+                errorBox.style.display = "block";
                 return;
             }
 
@@ -77,9 +84,8 @@ document.addEventListener("DOMContentLoaded", function () {
             infoBtn.style.display = "flex";
 
         } catch (error) {
-            console.error("Fetch error:", error);
-            alert("Failed to fetch questions. Please try again.");
-
+            errorBox.innerHTML = `<p><strong>Unexpected Error</strong></p><p>${error.message}</p>`;
+            errorBox.style.display = "block";
         } finally {
             // Hide loader & enable button
             loader.style.visibility = "hidden";

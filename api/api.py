@@ -1,41 +1,33 @@
 from flask import Flask, request, jsonify, render_template, Response
 import json
 
-from langchain.embeddings import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
-
+from src.exception import RAQAMException
 from src.raqam import QuizGenerator
-from src.document import Document
-from src.templates import prompt_template, retrieval_query
-
-# Loading models
-embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-llm = ChatOpenAI(model="gpt-4o-mini")
+from src.quiz_config import QuizConfig
+from src.utils import read_yaml
 
 app = Flask(__name__)
+
+config = read_yaml("config.yaml")
+quiz_config = QuizConfig(**config["base_quiz_config"])
+
+@app.errorhandler(RAQAMException)
+def handle_api_error(error):
+    response = jsonify({"error": error.error, "message": error.message, "stack_trace": error.stack_trace})
+    response.status_code = error.status_code
+    return response
 
 @app.route("/generate-quiz", methods=["POST"])
 def generate_quiz():
     # Isolating query parameters
     data = request.get_json()
-    text_content = data.get("text_content")
-    nb_questions = int(data.get("num_questions"))
-    nb_choices = int(data.get("num_choices"))
-    # Generating quiz with RAQAM
-    text_document = Document(text_data=[text_content], chunk_size=2000, chunk_overlap=100)
-    quiz_generator = QuizGenerator(content_source="text",
-                                   text_document=text_document,
-                                   embedding_model=embeddings,
-                                   embedding_batch_size=10,
-                                   llm=llm,
-                                   question_prompt_template=prompt_template,
-                                   retrieval_query=retrieval_query,
-                                   nb_questions=nb_questions,
-                                   local_vector_store_path=None)
+    quiz_config.parse_input_data(data)
+    # Parsing document 
+    quiz_generator = QuizGenerator(**quiz_config.__dict__)
     quiz = quiz_generator.generate_quiz()
     quiz_context = quiz_generator.get_context()
     output_data = {**quiz.to_dict(), **{"quizContext": quiz_context}}
-    return Response(json.dumps(output_data, indent=4, sort_keys=False), mimetype="applicatin/json")
+    return Response(json.dumps(output_data, indent=4, sort_keys=False), mimetype="application/json")
 
 @app.route("/quiz-sandbox")
 def quiz_sandbox():

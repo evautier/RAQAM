@@ -1,6 +1,10 @@
+import traceback
+
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from functools import reduce
+
+from src.exception import DocumentParsingException
 
 class Document():
     def __init__(self,
@@ -21,7 +25,11 @@ class Document():
         # Defining text splitter to use
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         # Splitting input text data into chunks of text
-        self.text_chunks = self.split_text_data_into_chunks(text_data=text_data)
+        try:
+            self.text_chunks = self.split_text_data_into_chunks(text_data=text_data)
+        except Exception as e:
+            raise DocumentParsingException(stack_trace=traceback.format_exc())
+
 
     def split_text_into_chunks(self,
                                text):

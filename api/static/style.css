@@ -303,3 +303,12 @@ body {
     color: black;
 }
 
+.error-box {
+    background-color: rgba(245, 52, 52, 0.8); /* Red with slight transparency */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    margin-bottom: 10px; /* Space before the question box */
+    display: none; /* Hidden by default */
+}

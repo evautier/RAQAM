@@ -1,5 +1,5 @@
-prompt_template = """
-You are a helpful assistant. Based on the following content, generate {nb_questions} detailed multiple-choice questions that tests understanding of the material. 
+question_prompt_template = """
+You are a helpful assistant. Based on the following content, generate {num_questions} detailed multiple-choice questions that tests understanding of the material. 
 
 Content:
 {content}
