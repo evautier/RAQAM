@@ -13,6 +13,20 @@
     <div class="container">
         <div id="left-container">
             <div id="config-panel">
+                <button id="settingsBtn" class="settings-icon">
+                    <i class="fas fa-cog"></i> 
+                </button>
+                <div id="settingsModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="closeSettingsModal">&times;</span>
+                        <h2>Settings</h2>
+                        <div id="settingsContent"></div>
+                        <div class="modal-footer">
+                            <button id="restore-defaults" class="settings-button secondary">Restore default settings</button>
+                            <button id="save-settings" class="settings-button primary">Save custom settings</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="config-row">
                     <label for="num-questions">Number of questions:</label>
                     <input type="text" id="num-questions" value="4">
@@ -21,12 +35,22 @@
                     <label for="num-choices">Number of choices :</label>
                     <input type="text" id="num-choices" value="4">
                 </div>
+                <div class="config-row">
+                    <label for="data-source">Data source :</label>
+                    <select id="data-source-selector">
+                        <option value="text-content">Text</option>
+                        <option value="url">Web Page</option>
+                        <option value="pdf-filepath">PDF File</option>
+                    </select>
+                </div>
                 <div class="generate-quiz-container">
                     <button id="generate-quiz">Generate Quiz</button>
                     <div id="loader" class="loader"></div>
                 </div>                
             </div>
-            <textarea id="text-area" placeholder="Copy text here..."></textarea>
+            <textarea id="text-content" placeholder="Copy text here..."></textarea>
+            <textarea id="url" placeholder="Copy URL here..."></textarea>
+            <input type="file" id="pdf-filepath">
         </div>
         <!-- Right Side: Question Box -->
         <div class="question-box">
@@ -47,6 +71,7 @@
             <div id="error-message" class="error-box" style="display: none;"></div>
             <h3 id="question-text"></h2>
             <div id="choices"></div>
+            <span id="explanation"></span>
         </div>
     </div>
 </body>

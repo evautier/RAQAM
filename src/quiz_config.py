@@ -3,9 +3,9 @@ from langchain_openai import ChatOpenAI
 
 from src.exception import InvalidInputDataException
 from src.templates import question_prompt_template, retrieval_query
-from src.utils import read_yaml
+from src.utils import load_config
 
-config = read_yaml("config.yaml")
+config = load_config()
 
 class QuizConfig():
     def __init__(self,

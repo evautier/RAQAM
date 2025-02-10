@@ -30,10 +30,11 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Push the button to the bottom */
-    height: 100px; /* Fixed height */
+    height: 150px; /* Fixed height */
     background-color: #f8f9fa;
     padding: 10px;
     margin-bottom: 20px;
+    position: relative;
 }
 
 /* Form Rows: Label + Input in One Row */
@@ -61,6 +62,14 @@ body {
     text-align: center;
 }
 
+.config-row select {
+    width: 100px; /* Slightly wider */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: left;
+}
+
 /* Generate Quiz Button: Bottom Right */
 #generate-quiz {
     align-self: flex-end; /* Push to the right */
@@ -74,7 +83,7 @@ body {
 }
 
 /* Text Area */
-#text-area {
+#text-content {
     flex-grow: 1; /* Takes all remaining space */
     width: 100%;
     padding: 10px;
@@ -82,6 +91,27 @@ body {
     resize: none;
     box-sizing: border-box;
     overflow-y: auto;
+    display: block;
+}
+
+#url {
+    height: 40px; /* Takes all remaining space */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    resize: none;
+    align-items: center;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: none;
+}
+
+#pdf-filepath {
+    height: 40px; /* Takes all remaining space */
+    width: 200px;
+    padding: 10px;
+    resize: none;
+    display: none;
 }
 
 /* Right Side: Question Box */
@@ -100,7 +130,10 @@ body {
 /* Choice Buttons */
 /* Default button style */
 .choice-btn {
-    display: block;
+    position: relative;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
     margin: 10px 0;
     padding: 12px;
     width: 100%;
@@ -110,6 +143,48 @@ body {
     color: rgb(59, 59, 59);
     font-size: 16px;
     text-align: left;
+}
+
+.explain-btn {
+    position: absolute;
+    right: 5px;
+    background: none;
+    border: none;
+    color: rgb(124, 196, 124); /* Makes it stand out */
+    font-size: 22px;
+    cursor: pointer;
+    margin-left: auto; /* Pushes it to the right */
+    padding: 5px;
+}
+
+.explain-btn:focus {
+    outline: none;
+}
+
+.explain-btn:hover {
+    color: rgb(124, 196, 124);
+    transform: scale(1.2); /* Slightly enlarge on hover */
+    transition: transform 0.2s ease-in-out;
+}
+
+.choice-btn:not(:disabled):hover {
+    opacity: 0.8;
+}
+
+.choice-btn:disabled {
+    pointer-events: none;
+}
+
+.choice-btn:disabled .explain-btn {
+    pointer-events: auto; /* Re-enables interaction */
+}
+
+#explanation {
+    display: inline-block;
+    text-justify: auto;
+    padding: 12px;
+    font-size: 16px;
+    color: #787878;
 }
 
 /* Correct answer style */
@@ -124,9 +199,6 @@ body {
     transition: background-color 0.3s ease-in-out;
 }
 
-.choice-btn:hover {
-    opacity: 0.8;
-}
 
 /* Animation for sliding effect */
 .slide-out {
@@ -177,6 +249,7 @@ body {
 
 /* Disabled navigation buttons */
 .nav-button:disabled {
+    pointer-events: none;
     background-color: #ccc !important;
     color: #ffffff !important;
     opacity: 0.15;
@@ -251,12 +324,12 @@ body {
     border: none;
     font-size: 22px;
     padding: 5px;
-    color: #e0e0e0;
+    color: #acacac;
     cursor: pointer;
 }
 
 .info-button:hover {
-    color: #c1c1c1;
+    color: #8f8c8c;
     transform: scale(1.2); /* Slightly enlarge on hover */
     transition: transform 0.2s ease-in-out;
 }
@@ -277,7 +350,6 @@ body {
 
 /* Centered modal box with same size as .question-box */
 .modal-content {
-    position: absolute;
     background: white;
     border-radius: 10px;
     padding: 20px;
@@ -285,8 +357,26 @@ body {
     transition: transform 0.2s ease-out;
     max-width: 45%; /* Matches .question-box */
     width: 100%;
-    height: 80vh; /* Same height */
-    overflow-y: auto; /* Scroll if content is too large */
+    height: 80vh;
+    overflow-y: auto;
+    flex-direction: column;
+    overflow: hidden; /* Prevents double scroll */
+    position: relative;
+    display: flex;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 0 0;
+    border-top: 1px solid #ddd; /* Optional separator */
+}
+
+#settingsContent {
+    flex-grow: 1;
+    overflow-y: auto; /* Enables scrolling if content overflows */
+    padding-bottom: 10px; /* Space before the footer */
 }
 
 /* Close button (styled better) */
@@ -312,3 +402,43 @@ body {
     margin-bottom: 10px; /* Space before the question box */
     display: none; /* Hidden by default */
 }
+
+/* Settings Icon */
+.settings-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #acacac;
+}
+
+.settings-icon:hover {
+    color: #8f8c8c;
+}
+
+.settings-button {
+    padding: 8px 14px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.settings-button.primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.settings-button.secondary {
+    background-color: #f8f9fa;
+    color: black;
+    border: 1px solid #ccc;
+}
+
+.settings-button:hover {
+    opacity: 0.8;
+}
+

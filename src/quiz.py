@@ -1,5 +1,8 @@
 from langchain_core.pydantic_v1 import BaseModel, Field
 from typing import List
+import random
+
+from src.utils import shuffle_with_mapping
 
 class MCQuestion(BaseModel):
     """
@@ -40,3 +43,12 @@ class Quiz(BaseModel):
                 ]                
             }
         )
+    
+    def randomize(self):
+        # Randomizing order of questions
+        random.shuffle(self.questions)
+        # Randomizing order of choices for each questions
+        for i in range(len(self.questions)):
+            shuffled_choices, mapping = shuffle_with_mapping(self.questions[i].choices)
+            self.questions[i].choices = shuffled_choices[:]  
+            self.questions[i].answer_index = mapping[self.questions[i].answer_index]

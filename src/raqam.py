@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 from langchain.prompts import PromptTemplate
 
-from src.exception import QuizGenerationException, InvalidInputDataException
+from src.exception import QuizGenerationException, InvalidInputDataException, NotImplementedException
 from src.document import Document
 from src.vector_store import VectorStore
 from src.quiz import Quiz
@@ -86,6 +86,8 @@ class QuizGenerator():
         if self.text_content is not None:
             self.text_document = Document(text_data=[self.text_content], chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
             self.content_source = "text"
+        elif self.url is not None:
+            raise NotImplementedException()
 
     def get_context(self):
         """
@@ -174,7 +176,9 @@ class QuizGenerator():
                 relevant_content = self.text_document.text_chunks   
                 questions_distribution = get_questions_distribution(nb_text_chunks=len(relevant_content), num_questions=self.num_questions) 
                 quiz = [self.generate_question(num_questions=questions_distribution[i], content=content) for i, content in tqdm(enumerate(relevant_content), desc="Generating questions") if questions_distribution[i] > 0]          
-
-            return reduce(lambda x, y: x+y, quiz)
+            quiz = reduce(lambda x, y: x+y, quiz) 
+            # Randomizing questions and choices questions in order to avoid redondancy
+            quiz.randomize()
+            return quiz       
         except Exception as e:
             raise QuizGenerationException(stack_trace=traceback.format_exc())

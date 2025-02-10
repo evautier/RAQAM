@@ -24,4 +24,10 @@ class QuizGenerationException(RAQAMException):
         super().__init__(error="Quiz generation error", 
                          status_code=401,
                          message="Something went wrong during quiz generation",
-                         stack_trace=stack_trace)    
+                         stack_trace=stack_trace)   
+
+class NotImplementedException(RAQAMException):
+    def __init__(self):
+        super().__init__(error="Quiz generation error", 
+                         status_code=402,
+                         message="Not implemented yet")     

@@ -1,6 +1,8 @@
 import re
+import os
 import tiktoken
 import yaml
+import random
 
 def remove_headers_footers(text, header_patterns=None, footer_patterns=None):
     if header_patterns is None:
@@ -62,3 +64,27 @@ def count_tokens(text, model):
 def read_yaml(path):
     with open(path, 'r') as file:
        return yaml.safe_load(file)
+    
+def save_yaml(dictionnary, path):
+    with open(path, "w") as file:
+        yaml.dump(dictionnary, file, default_flow_style=False, sort_keys=False)
+
+def load_config():
+    if os.path.exists('config/custom_config.yaml'):
+        return read_yaml('config/custom_config.yaml')
+    else:
+        return read_yaml('config/default_config.yaml')
+    
+def shuffle_with_mapping(lst):
+    """Shuffles a list and returns the shuffled list along with a mapping of old indices to new indices."""
+    indices = list(range(len(lst)))  # Original indices
+    shuffled_indices = indices[:]  # Copy of the indices
+    random.shuffle(shuffled_indices)  # Shuffle the indices
+
+    # Mapping from original index → shuffled index
+    mapping = {orig_idx: shuffled_idx for shuffled_idx, orig_idx in enumerate(shuffled_indices)}
+
+    # Apply the shuffle to create the new list
+    shuffled_list = [lst[idx] for idx in shuffled_indices]
+
+    return shuffled_list, mapping
