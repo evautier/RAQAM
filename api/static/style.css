@@ -63,7 +63,7 @@ body {
 }
 
 .config-row select {
-    width: 100px; /* Slightly wider */
+    width: 150px; /* Slightly wider */
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
@@ -106,7 +106,28 @@ body {
     display: none;
 }
 
+#youtube-url {
+    height: 40px; /* Takes all remaining space */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    resize: none;
+    align-items: center;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: none;
+}
+
+
 #pdf-filepath {
+    height: 40px; /* Takes all remaining space */
+    width: 200px;
+    padding: 10px;
+    resize: none;
+    display: none;
+}
+
+#video-filepath {
     height: 40px; /* Takes all remaining space */
     width: 200px;
     padding: 10px;

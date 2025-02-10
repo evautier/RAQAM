@@ -20,7 +20,6 @@ def handle_api_error(error):
 def generate_quiz():
     # Isolating query parameters
     data = request.get_json()    
-    print(data)
     quiz_config = QuizConfig(**config["base_quiz_config"])
     quiz_config.parse_input_data(data)
     # Parsing document 

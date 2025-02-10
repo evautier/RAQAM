@@ -30,7 +30,9 @@ class QuizGenerator():
                  num_choices,
                  text_content=None,
                  url=None,
+                 youtube_url=None,
                  pdf_filepath=None,
+                 video_filepath=None,
                  local_vector_store_path=None):
         """
         Quiz generator working with retrieval on .pdf embedded content. 
@@ -47,7 +49,9 @@ class QuizGenerator():
         @param num_choices: Number of choices to generate per question
         @param text_content: Text content to use for quiz generation
         @param url: URL for which to extract text for quiz generation
-        @paraml pdf_filepath: Filepath to .pdf file for which to extract text for quiz generation
+        @param youtube_url: URL for a youtube video from which to extract content
+        @param pdf_filepath: Filepath to .pdf file for which to extract text for quiz generation
+        @param video_filepath: Filepath to video file from which to extract content
         @param local_vector_store_path: Path where to save vector store to avoid multiplying embeddings generation
         """
         # Setting-up class attributes
@@ -63,7 +67,9 @@ class QuizGenerator():
         self.num_choices = num_choices
         self.text_content = text_content
         self.url = url
+        self.youtube_url = youtube_url
         self.pdf_filepath = pdf_filepath
+        self.video_filepath = video_filepath
         self.local_vector_store_path = local_vector_store_path
         # Building text document from input sources (text content > url > pdf filepath)
         self.build_text_document()
@@ -88,7 +94,13 @@ class QuizGenerator():
             self.content_source = "text"
         elif self.url is not None:
             raise NotImplementedException()
-
+        elif self.youtube_url is not None:
+            raise NotImplementedException()
+        elif self.pdf_filepath is not None:
+            raise NotImplementedException()
+        elif self.video_filepath is not None:
+            raise NotImplementedException()
+    
     def get_context(self):
         """
         Builds a dictionnary containing informations about quiz generation        

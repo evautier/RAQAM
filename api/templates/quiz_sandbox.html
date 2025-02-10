@@ -38,9 +38,11 @@
                 <div class="config-row">
                     <label for="data-source">Data source :</label>
                     <select id="data-source-selector">
-                        <option value="text-content">Text</option>
+                        <option value="text-content">Text Content</option>
                         <option value="url">Web Page</option>
+                        <option value="youtube-url">Youtube video</option>
                         <option value="pdf-filepath">PDF File</option>
+                        <option value="video-filepath">Video File</option>
                     </select>
                 </div>
                 <div class="generate-quiz-container">
@@ -50,7 +52,9 @@
             </div>
             <textarea id="text-content" placeholder="Copy text here..."></textarea>
             <textarea id="url" placeholder="Copy URL here..."></textarea>
+            <textarea id="youtube-url" placeholder="Copy Youtube URL here..."></textarea>
             <input type="file" id="pdf-filepath">
+            <input type="file" id="video-filepath">
         </div>
         <!-- Right Side: Question Box -->
         <div class="question-box">

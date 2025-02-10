@@ -1,7 +1,9 @@
 query_source_arguments:
 - text_content
 - url
+- youtube_url
 - pdf_filepath
+- video_filepath
 query_settings_arguments:
 - num_questions
 - num_choices
