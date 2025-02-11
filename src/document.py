@@ -30,7 +30,6 @@ class Document():
         except Exception as e:
             raise DocumentParsingException(stack_trace=traceback.format_exc())
 
-
     def split_text_into_chunks(self,
                                text):
         """

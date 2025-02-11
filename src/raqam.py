@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 
 from src.exception import QuizGenerationException, InvalidInputDataException, NotImplementedException
 from src.document import Document
+from src.web_page import WebPage
 from src.vector_store import VectorStore
 from src.quiz import Quiz
 from src.utils import get_questions_distribution, count_tokens
@@ -71,35 +72,40 @@ class QuizGenerator():
         self.pdf_filepath = pdf_filepath
         self.video_filepath = video_filepath
         self.local_vector_store_path = local_vector_store_path
-        # Building text document from input sources (text content > url > pdf filepath)
-        self.build_text_document()
-        # Performing embedding on text document's text chunks if necessary (will be None if only one chunk)
-        self.vector_store = self.create_vector_store()
         # Saving generation data
         self.model_name = llm.model_name
         self.embedding_model_name = embedding_model.model
         self.prompts_tokens = 0
         self.responses_tokens = 0
         self.embeddings_tokens = 0
-    
+        # Building text document from input sources (text content > url > pdf filepath)
+        self.build_text_document()
+        # Performing embedding on text document's text chunks if necessary (will be None if only one chunk)
+        self.vector_store = self.create_vector_store()
+
     def build_text_document(self):
         """
         Builds text document from input sources (text content > url > pdf filepath) 
         """
-        sources_arguments = ["text_content", "url", "pdf_filepath"]
+        sources_arguments = ["text_content", "url", "youtube_url", "pdf_filepath", "video_filepath"]
         if not any([arg_value is not None for arg_value in sources_arguments]):
             raise InvalidInputDataException(message=f"Must provide at least one data source argument")
         if self.text_content is not None:
-            self.text_document = Document(text_data=[self.text_content], chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
+            text_contents = [self.text_content]
             self.content_source = "text"
         elif self.url is not None:
-            raise NotImplementedException()
+            web_page = WebPage(url=self.url)
+            text_contents = [web_page.extract_text()]
+            self.content_source = "web_page"
         elif self.youtube_url is not None:
             raise NotImplementedException()
         elif self.pdf_filepath is not None:
             raise NotImplementedException()
         elif self.video_filepath is not None:
             raise NotImplementedException()
+        # Building text document from extracted text content
+        self.text_document = Document(text_data=text_contents, chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
+
     
     def get_context(self):
         """
@@ -146,7 +152,7 @@ class QuizGenerator():
                 print("Creating embeddings from extracted chunks and storing into vector store")
                 vector_store.add_embedded_chunks(chunks=self.text_document.text_chunks)
                 # Adding input tokens for embedding
-                self.embeddings_tokens += sum([count_tokens(chunk) for chunk in self.text_document.text_chunks])
+                self.embeddings_tokens += sum([count_tokens(chunk, self.embedding_model_name) for chunk in self.text_document.text_chunks])
             # Saving vector store in local
             if self.local_vector_store_path:
                 vector_store.save_vector_store(path=self.local_vector_store_path)

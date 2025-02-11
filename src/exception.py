@@ -31,3 +31,9 @@ class NotImplementedException(RAQAMException):
         super().__init__(error="Quiz generation error", 
                          status_code=402,
                          message="Not implemented yet")     
+        
+class WebPageException(RAQAMException):
+    def __init__(self, message):
+        super().__init__(error="WebPageException", 
+                         status_code=403,
+                         message=message)         
