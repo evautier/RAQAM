@@ -119,7 +119,7 @@ body {
 }
 
 
-#pdf-filepath {
+#pdf-file {
     height: 40px; /* Takes all remaining space */
     width: 200px;
     padding: 10px;
@@ -127,7 +127,7 @@ body {
     display: none;
 }
 
-#video-filepath {
+#video-file {
     height: 40px; /* Takes all remaining space */
     width: 200px;
     padding: 10px;
