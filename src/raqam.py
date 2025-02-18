@@ -33,7 +33,7 @@ class QuizGenerator():
                  url=None,
                  youtube_url=None,
                  pdf_file=None,
-                 video_filepath=None,
+                 video_file=None,
                  local_vector_store_path=None):
         """
         Quiz generator working with retrieval on .pdf embedded content. 
@@ -70,7 +70,7 @@ class QuizGenerator():
         self.url = url
         self.youtube_url = youtube_url
         self.pdf_file = pdf_file
-        self.video_filepath = video_filepath
+        self.video_file = video_file
         self.local_vector_store_path = local_vector_store_path
         # Saving generation data
         self.model_name = llm.model_name

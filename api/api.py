@@ -22,6 +22,7 @@ def generate_quiz():
     pdf_file = request.files.get('pdf_file')
     print(request.files)
     data = json.load(request.files.get('data'))
+    print(data)
     data["pdf_file"] = pdf_file
     quiz_config = QuizConfig(**config["base_quiz_config"])
     quiz_config.parse_input_data(data)
