@@ -32,7 +32,7 @@ class QuizGenerator():
                  text_content=None,
                  url=None,
                  youtube_url=None,
-                 pdf_filepath=None,
+                 pdf_file=None,
                  video_filepath=None,
                  local_vector_store_path=None):
         """
@@ -69,7 +69,7 @@ class QuizGenerator():
         self.text_content = text_content
         self.url = url
         self.youtube_url = youtube_url
-        self.pdf_filepath = pdf_filepath
+        self.pdf_file = pdf_file
         self.video_filepath = video_filepath
         self.local_vector_store_path = local_vector_store_path
         # Saving generation data
@@ -99,9 +99,9 @@ class QuizGenerator():
             self.content_source = "web_page"
         elif self.youtube_url is not None:
             raise NotImplementedException()
-        elif self.pdf_filepath is not None:
+        elif self.pdf_file is not None:
             raise NotImplementedException()
-        elif self.video_filepath is not None:
+        elif self.video_file is not None:
             raise NotImplementedException()
         # Building text document from extracted text content
         self.text_document = Document(text_data=text_contents, chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)

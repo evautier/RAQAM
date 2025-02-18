@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const closeSettingsModal = document.getElementById("closeSettingsModal");
     const settingsContent = document.getElementById("settingsContent");
     const dataSourceSelector = document.getElementById("data-source-selector");
+    const pdfFileInput = document.getElementById("pdf-file");
     let dataSource = dataSourceSelector.value;
 
     let quizContext = {};
@@ -104,10 +105,16 @@ document.addEventListener("DOMContentLoaded", function () {
             generateButton.disabled = true;        
             request_data = { num_questions: numQuestions, num_choices: numChoices};
             request_data[dataSource.replace('-', '_')] = document.getElementById(dataSource).value;
+            const formData = new FormData();
+            if (dataSource == "pdf-file") {
+                const file = pdfFileInput.files[0];
+                formData.append("pdf_file", file);
+            }            
+            formData.append("data", new Blob([JSON.stringify(request_data)], { type: "application/json" }));
             const response = await fetch("/generate-quiz", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },                
-                body: JSON.stringify(request_data),
+                // headers: { "Content-Type": "application/json" },                
+                body: formData,
             });
 
             if (!response.ok) {

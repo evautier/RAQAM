@@ -19,7 +19,9 @@ def handle_api_error(error):
 @app.route("/generate-quiz", methods=["POST"])
 def generate_quiz():
     # Isolating query parameters
-    data = request.get_json()    
+    pdf_file = request.files.get('pdf_file')
+    data = json.load(request.files.get('data'))
+    data["pdf_file"] = pdf_file
     quiz_config = QuizConfig(**config["base_quiz_config"])
     quiz_config.parse_input_data(data)
     # Parsing document 
