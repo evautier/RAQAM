@@ -87,7 +87,7 @@ class QuizGenerator():
         """
         Builds text document from input sources (text content > url > pdf filepath) 
         """
-        sources_arguments = ["text_content", "url", "youtube_url", "pdf_filepath", "video_filepath"]
+        sources_arguments = ["text_content", "url", "youtube_url", "pdf_file", "video_file"]
         if not any([arg_value is not None for arg_value in sources_arguments]):
             raise InvalidInputDataException(message=f"Must provide at least one data source argument")
         if self.text_content is not None:
@@ -186,12 +186,12 @@ class QuizGenerator():
             if self.vector_store:
                 print("Extracting relevant chunks from embedded document")
                 relevant_content = self.vector_store.find_relevant_chunks(query=self.retrieval_query,
-                                                                        k=self.num_questions)
+                                                                          k=self.num_questions)
                 # Generating question for each content that has been found
                 print("Generating questions from relevant content")
                 quiz = [self.generate_question(content=content.page_content) for content in tqdm(relevant_content, desc="Generating questions")]
             else:
-                relevant_content = self.text_document.text_chunks   
+                relevant_content = self.text_document.text_chunks  
                 questions_distribution = get_questions_distribution(nb_text_chunks=len(relevant_content), num_questions=self.num_questions) 
                 quiz = [self.generate_question(num_questions=questions_distribution[i], content=content) for i, content in tqdm(enumerate(relevant_content), desc="Generating questions") if questions_distribution[i] > 0]          
             quiz = reduce(lambda x, y: x+y, quiz) 

@@ -51,8 +51,12 @@ def preprocess_text(text):
 
 def get_questions_distribution(nb_text_chunks, num_questions):
     index = 0
+    print(nb_text_chunks)
+    print(num_questions)
     questions_distribution = [0 for i in range(nb_text_chunks)]
+    print(questions_distribution)
     for _ in range(num_questions):
+        print(index)
         questions_distribution[index] += 1
         index = (index + 1) % nb_text_chunks
     return questions_distribution
