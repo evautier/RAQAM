@@ -23,10 +23,14 @@ class Document():
         self.chunk_overlap = chunk_overlap
         self.content_length = sum([len(text) for text in text_data])
         # Defining text splitter to use
+        print(chunk_size)
+        print(chunk_overlap)
+        print(text_data)
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         # Splitting input text data into chunks of text
         try:
             self.text_chunks = self.split_text_data_into_chunks(text_data=text_data)
+            print(self.text_chunks)
         except Exception as e:
             raise DocumentParsingException(stack_trace=traceback.format_exc())
 
