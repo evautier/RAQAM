@@ -18,7 +18,6 @@ class WebPage():
         content to get relevant text        
         """
         # Extracting html content from web page
-        print(self.url)
         r = requests.get(self.url, headers=self.headers)
         if r.status_code != 200:
             raise WebPageException(message=f"Failed to extract web content with status code {r.status_code}")

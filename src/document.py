@@ -27,7 +27,6 @@ class Document():
         # Splitting input text data into chunks of text
         try:
             self.text_chunks = self.split_text_data_into_chunks(text_data=text_data)
-            print(self.text_chunks)
         except Exception as e:
             raise DocumentParsingException(stack_trace=traceback.format_exc())
 
