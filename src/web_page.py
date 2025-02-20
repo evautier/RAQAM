@@ -23,12 +23,14 @@ class WebPage():
             raise WebPageException(message=f"Failed to extract web content with status code {r.status_code}")
         # Parsing content from webpage
         soup = BeautifulSoup(r.content, "html.parser")
+        print(soup)
         # Remove unwanted elements
         for tag in ["script", "style", "header", "nav", "footer", "aside", "form", "noscript"]:
             for element in soup.find_all(tag):
                 element.decompose()  # Removes the element
         # Try to find the main content
         main_content = soup.find("article") or soup.find("main") or soup.find("div", {"id": "content"})
+        print(main_content)
         if main_content:
             text = main_content.get_text(separator="\n", strip=True)
         else:
