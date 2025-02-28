@@ -38,7 +38,7 @@ def generate_quiz():
         quiz = quiz_generator.generate_quiz()
         output_data = {**output_data, **quiz.to_dict()}
     quiz_context = quiz_generator.get_context()
-    output_data = {**output_data, **quiz_context}
+    output_data["quizContext"] = quiz_context
     return Response(json.dumps(output_data, indent=4, sort_keys=False), mimetype="application/json")
 
 @app.route("/quiz-sandbox")
