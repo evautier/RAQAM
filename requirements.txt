@@ -8,3 +8,4 @@ faiss-cpu
 flask
 pyyaml
 bs4
+pymupdf4llm
