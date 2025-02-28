@@ -20,6 +20,8 @@ def handle_api_error(error):
 def generate_quiz():
     # Isolating query parameters
     pdf_file = request.files.get('pdf_file')
+    if pdf_file is not None:
+        pdf_file = pdf_file.read()
     print(request.files)
     data = json.load(request.files.get('data'))
     print(data)
@@ -28,9 +30,15 @@ def generate_quiz():
     quiz_config.parse_input_data(data)
     # Parsing document 
     quiz_generator = QuizGenerator(**quiz_config.__dict__)
-    quiz = quiz_generator.generate_quiz()
+    output_data = {}
+    if data["generate_flashcards"]:
+        flashcards = quiz_generator.generate_flashcards()
+        output_data = {**output_data, **flashcards.to_dict()}
+    if int(data["num_questions"]) > 0:
+        quiz = quiz_generator.generate_quiz()
+        output_data = {**output_data, **quiz.to_dict()}
     quiz_context = quiz_generator.get_context()
-    output_data = {**quiz.to_dict(), **{"quizContext": quiz_context}}
+    output_data = {**output_data, **quiz_context}
     return Response(json.dumps(output_data, indent=4, sort_keys=False), mimetype="application/json")
 
 @app.route("/quiz-sandbox")
@@ -49,6 +57,7 @@ def get_default_config():
 @app.route("/set-custom-config", methods=["POST"])
 def set_custom_config():    
     custom_settings = request.get_json()
+    custom_settings = {key: value if value != "null" else None for key, value in custom_settings.items()}
     config["base_quiz_config"] = custom_settings    
     save_yaml(config, "config/custom_config.yaml")
     return Response(json.dumps(config["base_quiz_config"], indent=4, sort_keys=False), mimetype="application/json")

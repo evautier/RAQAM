@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const generateButton = document.getElementById("generate-quiz");
     const numQuestionsInput = document.getElementById("num-questions");
     const numChoicesInput = document.getElementById("num-choices");
+    const generateFlashcardsBox = document.getElementById("generate-flashcards");
     const questionText = document.getElementById("question-text");
     let questionIndex = 0;
     let questions = [];
@@ -103,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Show loader & disable button        
             loader.style.visibility = "visible";
             generateButton.disabled = true;        
-            request_data = { num_questions: numQuestions, num_choices: numChoices};
+            request_data = { num_questions: numQuestions, num_choices: numChoices, generate_flashcards: generateFlashcardsBox.checked};
             request_data[dataSource.replace('-', '_')] = document.getElementById(dataSource).value;
             const formData = new FormData();
             if (dataSource == "pdf-file") {

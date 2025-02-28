@@ -2,7 +2,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 
 from src.exception import InvalidInputDataException
-from src.templates import question_prompt_template, retrieval_query
+from src.templates import question_prompt_template, flashcards_prompt_template, retrieval_query
 from src.utils import load_config
 
 config = load_config()
@@ -22,6 +22,7 @@ class QuizConfig():
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.question_prompt_template = question_prompt_template
+        self.flashcards_prompt_template = flashcards_prompt_template
         self.retrieval_query = retrieval_query
         self.local_vector_store_path = local_vector_store_path
         # Building LLM and embeddings models
@@ -53,6 +54,6 @@ class QuizConfig():
                 arg_value = int(self.__getattribute__(arg))
             except Exception as e:
                 raise InvalidInputDataException(message=f"Couldn't parse {arg} to integer")
-            if not arg_value > 0:
-                raise InvalidInputDataException(message=f"Argument {arg} must be strictly positive")
+            if not arg_value >= 0:
+                raise InvalidInputDataException(message=f"Argument {arg} must be positive")
             self.__setattr__(arg, arg_value)

@@ -25,6 +25,13 @@ class QuizGenerationException(RAQAMException):
                          status_code=401,
                          message="Something went wrong during quiz generation",
                          stack_trace=stack_trace)   
+        
+class FlashcardsGenerationException(RAQAMException):
+    def __init__(self, stack_trace):
+        super().__init__(error="Flashcards generation error", 
+                         status_code=401,
+                         message="Something went wrong during flashcards generation",
+                         stack_trace=stack_trace)   
 
 class NotImplementedException(RAQAMException):
     def __init__(self):

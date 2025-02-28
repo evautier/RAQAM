@@ -5,11 +5,12 @@ from tqdm import tqdm
 
 from langchain.prompts import PromptTemplate
 
-from src.exception import QuizGenerationException, InvalidInputDataException, NotImplementedException
+from src.exception import QuizGenerationException, FlashcardsGenerationException, InvalidInputDataException, NotImplementedException
 from src.document import Document
 from src.web_page import WebPage
+from src.pdf import PDFDocument
 from src.vector_store import VectorStore
-from src.quiz import Quiz
+from src.quiz import Quiz, FlashCards
 from src.utils import get_questions_distribution, count_tokens
 
 model_costs = {
@@ -26,9 +27,10 @@ class QuizGenerator():
                  chunk_size,
                  chunk_overlap,
                  question_prompt_template,
+                 flashcards_prompt_template,
                  retrieval_query,
                  num_questions,
-                 num_choices,
+                 num_choices=None,
                  text_content=None,
                  url=None,
                  youtube_url=None,
@@ -45,6 +47,7 @@ class QuizGenerator():
         @param chunk_size: Size of chunk for text treatment
         @param chunk_overlap: Number of characters for chunk overlap
         @param question_prompt_template: Prompt template to use to generate question on content
+        @param flashcards_prompt_template: Prompt template to use to generate flashcards on content
         @param retrieval_query: Query to use to extract relevant content for quiz generation
         @param num_questions: Number of questions to generate for this quiz
         @param num_choices: Number of choices to generate per question
@@ -56,13 +59,15 @@ class QuizGenerator():
         @param local_vector_store_path: Path where to save vector store to avoid multiplying embeddings generation
         """
         # Setting-up class attributes
-        self.llm = llm.with_structured_output(schema=Quiz)
+        self.quiz_llm = llm.with_structured_output(schema=Quiz)
+        self.flaschards_llm = llm.with_structured_output(schema=FlashCards)
         self.embedding_model = embedding_model
         self.embedding_batch_size = embedding_batch_size
         self.min_text_length = min_text_length
         self.chunk_size = chunk_size
         self.chunk_overlap = chunk_overlap
         self.question_prompt_template = question_prompt_template
+        self.flashcards_prompt_template = flashcards_prompt_template
         self.retrieval_query = retrieval_query
         self.num_questions = num_questions
         self.num_choices = num_choices
@@ -100,7 +105,9 @@ class QuizGenerator():
         elif self.youtube_url is not None:
             raise NotImplementedException()
         elif self.pdf_file is not None:
-            raise NotImplementedException()
+            pdf_document = PDFDocument(pdf_file=self.pdf_file)
+            text_contents = [pdf_document.extract_text()]
+            self.content_source = "pdf_file"
         elif self.video_file is not None:
             raise NotImplementedException()
         # Building text document from extracted text content
@@ -143,7 +150,7 @@ class QuizGenerator():
         """
         Creates a vector store and performs embedding on document text chunks if necessary               
         """
-        if len(self.text_document.text_chunks) > self.num_questions:
+        if self.num_questions > 0 and len(self.text_document.text_chunks) > self.num_questions:
             # Defining vector store and storing text chunks using embedding
             vector_store = VectorStore(embedding_model=self.embedding_model,
                                        embedding_batch_size=self.embedding_batch_size,
@@ -171,7 +178,7 @@ class QuizGenerator():
         prompt = PromptTemplate(input_variables=["num_questions", "content"], template=self.question_prompt_template)
         formatted_prompt = prompt.format(num_questions=num_questions, content=content)        
         # Generating question using LLM
-        response = self.llm.invoke(formatted_prompt)
+        response = self.quiz_llm.invoke(formatted_prompt)
         # Adding generated token for input and output
         self.prompts_tokens += count_tokens(text=formatted_prompt, model=self.model_name)
         self.responses_tokens += count_tokens(text=response.json(), model=self.model_name)
@@ -179,7 +186,7 @@ class QuizGenerator():
 
     def generate_quiz(self):
         """
-        Generates a quiz on the stored .pdf document with prompt template using langchain retrieval chain.
+        Generates a quiz on the stored document with prompt template using langchain retrieval chain.
         """
         # Performing retrieval on full document to find relevant content for questions
         try:
@@ -200,3 +207,31 @@ class QuizGenerator():
             return quiz       
         except Exception as e:
             raise QuizGenerationException(stack_trace=traceback.format_exc())
+
+    def generate_flashcards_on_content(self,
+                                       content):
+        """
+        Generate one or several flashcards on a specific content.
+
+        @param content: Content for which to generate flashcards on        
+        """        
+        # Building prompt using prompt template and content
+        prompt = PromptTemplate(input_variables=["content"], template=self.flashcards_prompt_template)
+        formatted_prompt = prompt.format(content=content)        
+        # Generating question using LLM
+        response = self.flaschards_llm.invoke(formatted_prompt)
+        # Adding generated token for input and output
+        self.prompts_tokens += count_tokens(text=formatted_prompt, model=self.model_name)
+        self.responses_tokens += count_tokens(text=response.json(), model=self.model_name)
+        return response        
+
+    def generate_flashcards(self):
+        """
+        Generates flashcards on the stored document with prompt template.        
+        """
+        try:
+            flashcards = [self.generate_flashcards_on_content(content=chunk) for chunk in tqdm(self.text_document.text_chunks, desc="Generating flashcards on content")]
+            flashcards = reduce(lambda x,y: x+y, flashcards)
+            return flashcards
+        except Exception as e:
+            raise FlashcardsGenerationException(stack_trace=traceback.format_exc())        

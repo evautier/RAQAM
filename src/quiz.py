@@ -52,3 +52,26 @@ class Quiz(BaseModel):
             shuffled_choices, mapping = shuffle_with_mapping(self.questions[i].choices)
             self.questions[i].choices = shuffled_choices[:]  
             self.questions[i].answer_index = mapping[self.questions[i].answer_index]
+
+class FlashCard(BaseModel):
+    """
+    Schema for a flashcard about a specific subject
+    """
+    front: str = Field(description="The front of the card. A term, a notion or a question.")
+    back: str = Field(description="The back of the card. A definition, an explanation or an answer.")
+
+class FlashCards(BaseModel):
+    """
+    Schema for list of flashcards about a document subjects.
+    """
+    flashcards: List[FlashCard]
+
+    def __add__(self, other):
+        return FlashCards(flashcards=self.flashcards + other.flashcards)
+    
+    def to_dict(self):
+        return (
+            {
+                "flashcards": [flashcard.__dict__ for flashcard in self.flashcards]
+            }
+        )
