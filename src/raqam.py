@@ -71,9 +71,9 @@ class QuizGenerator():
         self.retrieval_query = retrieval_query
         self.num_questions = num_questions
         self.num_choices = num_choices
-        self.text_content = text_content
-        self.url = url
-        self.youtube_url = youtube_url
+        self.text_content = text_content if text_content != '' else None
+        self.url = url if url != '' else None
+        self.youtube_url = youtube_url if youtube_url != '' else None
         self.pdf_file = pdf_file
         self.video_file = video_file
         self.local_vector_store_path = local_vector_store_path
@@ -109,7 +109,7 @@ class QuizGenerator():
             text_contents = [pdf_document.extract_text()]
             self.content_source = "pdf_file"
         elif self.video_file is not None:
-            raise NotImplementedException()
+            raise NotImplementedException()            
         # Building text document from extracted text content
         self.text_document = Document(text_data=text_contents, chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
 
